@@ -1,42 +1,170 @@
 <!doctype html>
-<html lang="da">
+<html lang="en" data-theme="system">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>storgaardcoding · API Showcase</title>
-    <meta name="description" content="Portfolio med Phonyfy og Hotel APIs" />
-    <link rel="stylesheet" href="styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>StorgaardCoding — Asger Storgaard Høffner</title>
+    <meta name="description" content="Portfolio of Asger Storgaard Høffner — Java/Javalin developer building pragmatic backends and sleek UIs." />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:title" content="StorgaardCoding — Portfolio" />
+    <meta property="og:description" content="Java + Javalin projects, APIs and experiments." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://storgaardcoding.dk/" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="preload" href="/assets/css/styles.css" as="style" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <script src="/assets/app.js" defer></script>
+    <script defer src="app.js"></script>
 </head>
 <body>
-<div class="wrap">
-    <header>
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-            <h1>Asger Storgaard Høffner</h1>
-            <p class="lead">To micro-services. Klik for at åbne den live API (root redirecter til <code>/api/routes</code>).</p>
-        </div>
-    </header>
+<a class="skip-link" href="#main">Skip to content</a>
 
-    <section class="grid" id="apps"></section>
+<header class="site-header blur" data-sticky>
+    <div class="container header-inner">
+        <a class="brand" href="#top" aria-label="StorgaardCoding home">
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="brand-mark"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"></path></svg>
+            <span>Storgaard<span class="accent">Coding</span></span>
+        </a>
 
-    <!-- GitHub sektion -->
-    <section class="grid" aria-label="Links">
-        <article class="card">
-            <div class="tag">github.com</div>
-            <div class="title">GitHub</div>
-            <p class="desc">Se mine projekter og kildekode.</p>
-            <div class="actions">
-                <a class="btn primary" href="https://github.com/AsgerSH" target="_blank" rel="noopener">Åbn GitHub</a>
-                <a class="btn" href="https://github.com/AsgerSH?tab=repositories" target="_blank" rel="noopener">Repositories</a>
+        <nav class="nav" aria-label="Primary">
+            <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav">
+                <span class="sr-only">Toggle menu</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+            </button>
+
+            <ul id="primary-nav" class="nav-list">
+                <li><a href="#projects" data-nav>Projects</a></li>
+                <li><a href="#about" data-nav>About</a></li>
+                <li><a href="#contact" data-nav>Contact</a></li>
+                <li>
+                    <button class="theme-toggle" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+                        <svg class="icon sun" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4V2m0 20v-2m8-8h2M2 12h2m13.07 6.07l1.41 1.41M5.52 5.52L4.11 4.11m0 15.78l1.41-1.41M18.49 5.51l1.41-1.4"/><circle cx="12" cy="12" r="4"/></svg>
+                        <svg class="icon moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main id="main">
+    <!-- Hero -->
+    <section class="hero" id="top">
+        <div class="container hero-inner">
+            <p class="eyebrow">Hi, I'm</p>
+            <h1 class="headline">Asger Storgaard Høffner</h1>
+            <p class="tagline">I build clean, pragmatic Java backends and modern UIs — with Javalin, JPA/Hibernate, and Docker-first deployments.</p>
+            <div class="hero-cta">
+                <a class="btn primary" href="#projects">See projects</a>
+                <a class="btn ghost" href="#contact">Contact me</a>
             </div>
-        </article>
+        </div>
+        <div class="backdrop">
+            <div class="orb orb-a"></div>
+            <div class="orb orb-b"></div>
+            <div class="grid-lines"></div>
+        </div>
     </section>
 
-    <footer>
-        <span class="pill">Docker · Caddy · Watchtower</span>
-    </footer>
-</div>
+    <!-- Projects -->
+    <section class="section" id="projects">
+        <div class="container">
+            <div class="section-head">
+                <h2>Projects</h2>
+                <p>Production-grade APIs and experiments. Deployed on DigitalOcean with Docker.</p>
+            </div>
 
-<script src="app.js" defer></script>
+            <div class="grid cards">
+                <!-- Project: Hotel API -->
+                <article class="card project-card reveal" data-url="https://hotels.storgaardcoding.dk/">
+                    <div class="card-head">
+                        <h3>Hotel API</h3>
+                        <span class="status-pill" data-status>Checking…</span>
+                    </div>
+                    <p class="card-text">RESTful backend for hotel resources (rooms, bookings, guests). Built with Java, JPA/Hibernate, and Javalin. Containerized and deployed on DigitalOcean.</p>
+                    <ul class="taglist">
+                        <li>Java</li><li>Javalin</li><li>JPA</li><li>Hibernate</li><li>Docker</li>
+                    </ul>
+                    <div class="card-actions">
+                        <a class="btn outline" href="https://hotels.storgaardcoding.dk/" target="_blank" rel="noopener">Open site</a>
+                    </div>
+                </article>
+
+                <!-- Project: Phonyfy API -->
+                <article class="card project-card reveal" data-url="https://phonyfy.storgaardcoding.dk/">
+                    <div class="card-head">
+                        <h3>Phonyfy (Fake Spotify API)</h3>
+                        <span class="status-pill" data-status>Checking…</span>
+                    </div>
+                    <p class="card-text">A playful Spotify-like API for artists, albums and tracks. Great for demos, pagination, search and auth flows without touching the real Spotify API.</p>
+                    <ul class="taglist">
+                        <li>Java</li><li>Javalin</li><li>REST</li><li>JWT (optional)</li><li>Docker</li>
+                    </ul>
+                    <div class="card-actions">
+                        <a class="btn outline" href="https://phonyfy.storgaardcoding.dk/" target="_blank" rel="noopener">Open site</a>
+                    </div>
+                </article>
+
+                <!-- Project: This website -->
+                <article class="card project-card reveal" data-url="https://storgaardcoding.dk/">
+                    <div class="card-head">
+                        <h3>storgaardcoding.dk</h3>
+                        <span class="status-pill" data-status>Checking…</span>
+                    </div>
+                    <p class="card-text">This portfolio. Static assets via Javalin, minimal JS, accessible and fast. CI/CD through DockerHub to DigitalOcean.</p>
+                    <ul class="taglist">
+                        <li>Javalin</li><li>HTML</li><li>CSS</li><li>JS</li><li>Docker</li>
+                    </ul>
+                    <div class="card-actions">
+                        <a class="btn outline" href="#top">Back to top</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section class="section" id="about">
+        <div class="container grid about-grid">
+            <div>
+                <h2>About</h2>
+                <p>I'm a creative, team-first developer who enjoys turning ideas into reliable, well-tested software. On the backend I like clear domain models, tidy repos and pragmatic architecture; on the frontend I prefer minimal, fast UIs.</p>
+                <p>Tech I reach for: <strong>Java</strong>, <strong>Javalin</strong>, <strong>JPA/Hibernate</strong>, <strong>Docker</strong>, <strong>Postgres/MySQL</strong>, and <strong>vanilla web</strong> where possible.</p>
+            </div>
+            <ul class="highlights">
+                <li><span class="dot"></span> Docker-first deployments on DigitalOcean</li>
+                <li><span class="dot"></span> REST APIs with clear contracts</li>
+                <li><span class="dot"></span> Tests and CI that stay out of the way</li>
+                <li><span class="dot"></span> Accessibility and performance minded</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="section" id="contact">
+        <div class="container contact">
+            <h2>Contact</h2>
+            <p>Want to collaborate or see more code? Reach out and I'll get back to you.</p>
+            <div class="contact-actions">
+                <a class="btn primary" href="mailto:hello@storgaardcoding.dk">Email me</a>
+                <a class="btn ghost" href="#projects">See projects</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <div class="container footer-inner">
+        <p>© <span id="year"></span> StorgaardCoding</p>
+        <nav aria-label="Footer">
+            <a href="#projects">Projects</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </div>
+</footer>
 </body>
 </html>
