@@ -1,46 +1,49 @@
 <configuration debug="false">
+    <!-- Write to /tmp by default (works in your current Dockerfile).
+         Override with -DLOG_DIR=/app/logs locally if you want. -->
+    <property name="LOG_DIR" value="${LOG_DIR:-/tmp}" />
+    <property name="APP_LOG" value="${LOG_DIR}/javalin-app.log" />
+    <property name="DEBUG_LOG" value="${LOG_DIR}/debug.log" />
 
-    <!-- Console appender (for live debugging) -->
+    <!-- Console (best for containers) -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%highlight(%-5level) %cyan(%logger{15}) - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- General application log -->
+    <!-- App file -->
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>logs/javalin-app.log</file>
+        <file>${APP_LOG}</file>
         <append>true</append>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- Debug log for your own app -->
+    <!-- Debug file -->
     <appender name="DEBUGFILE" class="ch.qos.logback.core.FileAppender">
-        <file>logs/debug.log</file>
+        <file>${DEBUG_LOG}</file>
         <append>false</append>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- Suppress framework spam -->
+    <!-- Tame noisy libs -->
     <logger name="org.hibernate" level="WARN" />
     <logger name="org.eclipse.jetty" level="WARN" />
     <logger name="io.javalin" level="INFO" />
     <logger name="com.zaxxer.hikari" level="WARN" />
 
-    <!-- Your application package logs -->
-    <logger name="app" level="DEBUG" additivity="false">
-        <appender-ref ref="DEBUGFILE"/>
+    <!-- Your app package -->
+    <logger name="com.marcuspff" level="DEBUG" additivity="false">
         <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="DEBUGFILE"/>
     </logger>
 
-    <!-- Root logger (fallback for all) -->
     <root level="WARN">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </root>
-
 </configuration>
