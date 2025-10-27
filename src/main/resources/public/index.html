@@ -1,89 +1,42 @@
 <!doctype html>
-<html lang="en" data-theme="auto">
+<html lang="da">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Marcus Forsberg</title>
-    <meta name="description" content="Landing page for Marcus Forsberg — projects and APIs." />
-    <meta name="color-scheme" content="light dark" />
-    <meta property="og:title" content="Marcus Forsberg" />
-    <meta property="og:description" content="Projects, APIs, and deployments." />
-    <meta property="og:type" content="website" />
-    <link rel="preload" href="/assets/css/styles.css" as="style" />
-    <link rel="stylesheet" href="/assets/css/styles.css" />
-    <script src="/assets/app.js" defer></script>
+    <title>storgaardcoding · API Showcase</title>
+    <meta name="description" content="Portfolio med Phonyfy og Hotel APIs" />
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <div class="wrap">
     <header>
-        <a class="brand" href="/">
-            <div class="logo" aria-hidden="true"></div>
-            <h1>marcuspff.com</h1>
-        </a>
-        <button class="theme" id="themeToggle" type="button" title="Toggle theme">Toggle darkmode</button>
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+            <h1>Asger Storgaard Høffner</h1>
+            <p class="lead">To micro-services. Klik for at åbne den live API (root redirecter til <code>/api/routes</code>).</p>
+        </div>
     </header>
 
-    <section class="hero">
-        <div class="kicker">Overview</div>
-        <h2>Projects & APIs</h2>
-        <p>Simple hub for my running services and deployments.</p>
-        <div class="links hero-links">
-            <a class="link" href="https://hotel.marcuspff.com/api/routes" target="_blank" rel="noopener">
-          <span>
-            <strong>Hotel API</strong><br/>
-            <small>Authentication, bookings, routes overview</small>
-          </span>
-                <span class="tag">/api</span>
-            </a>
-            <a class="link" href="https://calcapi.marcuspff.com/api/routes" target="_blank" rel="noopener">
-          <span>
-            <strong>Calculator API</strong><br/>
-            <small>JWT auth, role-guarded ops, routes overview</small>
-          </span>
-                <span class="tag">/api</span>
-            </a>
-        </div>
+    <section class="grid" id="apps"></section>
+
+    <!-- GitHub sektion -->
+    <section class="grid" aria-label="Links">
+        <article class="card">
+            <div class="tag">github.com</div>
+            <div class="title">GitHub</div>
+            <p class="desc">Se mine projekter og kildekode.</p>
+            <div class="actions">
+                <a class="btn primary" href="https://github.com/AsgerSH" target="_blank" rel="noopener">Åbn GitHub</a>
+                <a class="btn" href="https://github.com/AsgerSH?tab=repositories" target="_blank" rel="noopener">Repositories</a>
+            </div>
+        </article>
     </section>
 
-    <section class="grid">
-        <div class="col-8">
-            <div class="card">
-                <div class="kicker">About</div>
-                <h3 class="no-margin">What’s here</h3>
-                <p class="muted about-text">
-                    Links to active subdomains. I keep things minimal and fast. More sections can be added later (portfolio, blog, docs).
-                </p>
-                <div class="links">
-                    <a class="link" href="mailto:marcus.pff03@gmail.com">
-                        <span><strong>Contact</strong><br/><small>marcus.pff03@gmail.com</small></span>
-                        <span class="tag">Email</span>
-                    </a>
-                    <a class="link" href="https://github.com/MarcusPFF" target="_blank" rel="noopener">
-                        <span><strong>GitHub</strong><br/><small>github.com/MarcusPFF</small></span>
-                        <span class="tag">Code</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="col-4">
-            <div class="card">
-                <div class="kicker">Quick links</div>
-                <a class="link" href="https://hotel.marcuspff.com/api/routes" target="_blank" rel="noopener">
-                    <span><strong>Hotel API routes</strong><br/><small>Human-readable overview</small></span>
-                    <span class="tag">Routes</span>
-                </a>
-                <a class="link" href="https://calcapi.marcuspff.com/api/routes" target="_blank" rel="noopener">
-                    <span><strong>Calc API routes</strong><br/><small>Human-readable overview</small></span>
-                    <span class="tag">Routes</span>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <footer class="footer">
-        <span>© <span id="y"></span> Marcus Forsberg</span>
-        <a class="inline" href="https://marcuspff.com">marcuspff.com</a>
+    <footer>
+        <span class="pill">Docker · Caddy · Watchtower</span>
     </footer>
 </div>
+
+<script src="app.js" defer></script>
 </body>
 </html>
