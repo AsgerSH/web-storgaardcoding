@@ -1,4 +1,10 @@
+# .github/workflows/workflow.yml
 name: CI WORKFLOW
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
