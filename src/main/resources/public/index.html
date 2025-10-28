@@ -12,7 +12,6 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://storgaardcoding.dk/" />
     <meta name="twitter:card" content="summary_large_image" />
-
     <link rel="icon" href="/favicon.ico" />
     <link rel="preload" href="/assets/css/styles.css" as="style" />
     <link rel="stylesheet" href="/assets/css/styles.css" />
@@ -84,12 +83,21 @@
                         <h3>Hotel API</h3>
                         <span class="status-pill" data-status>Checking…</span>
                     </div>
-                    <p class="card-text">RESTful backend for hotel resources (rooms, bookings, guests). Built with Java, JPA/Hibernate, and Javalin. Containerized and deployed on DigitalOcean.</p>
+
+                    <p class="card-text">
+                        RESTful backend for hotels with CRUD endpoints and JPA/Hibernate. Containerized and deployed with Docker + Caddy.
+                    </p>
+
                     <ul class="taglist">
                         <li>Java</li><li>Javalin</li><li>JPA</li><li>Hibernate</li><li>Docker</li>
                     </ul>
+
+                    <!-- Live API JSON preview -->
+                    <pre class="api-preview" data-endpoint="https://hotels.storgaardcoding.dk/api/hotels/1">Loading API preview…</pre>
+
                     <div class="card-actions">
                         <a class="btn outline" href="https://hotels.storgaardcoding.dk/" target="_blank" rel="noopener">Open site</a>
+                        <a class="btn" href="https://hotels.storgaardcoding.dk/api/hotels/1" target="_blank" rel="noopener">API: /api/hotels/1</a>
                     </div>
                 </article>
 
@@ -99,27 +107,21 @@
                         <h3>Phonyfy (Fake Spotify API)</h3>
                         <span class="status-pill" data-status>Checking…</span>
                     </div>
-                    <p class="card-text">A playful Spotify-like API for artists, albums and tracks. Great for demos, pagination, search and auth flows without touching the real Spotify API.</p>
+
+                    <p class="card-text">
+                        Demo streaming API that exposes songs and artists. Built with Javalin and deployed with Docker + Caddy.
+                    </p>
+
                     <ul class="taglist">
-                        <li>Java</li><li>Javalin</li><li>REST</li><li>JWT (optional)</li><li>Docker</li>
+                        <li>Java</li><li>Javalin</li><li>JPA</li><li>Docker</li>
                     </ul>
+
+                    <!-- Live API JSON preview -->
+                    <pre class="api-preview" data-endpoint="https://phonyfy.storgaardcoding.dk/api/songs/1">Loading API preview…</pre>
+
                     <div class="card-actions">
                         <a class="btn outline" href="https://phonyfy.storgaardcoding.dk/" target="_blank" rel="noopener">Open site</a>
-                    </div>
-                </article>
-
-                <!-- Project: This website -->
-                <article class="card project-card reveal" data-url="https://storgaardcoding.dk/">
-                    <div class="card-head">
-                        <h3>storgaardcoding.dk</h3>
-                        <span class="status-pill" data-status>Checking…</span>
-                    </div>
-                    <p class="card-text">This portfolio. Static assets via Javalin, minimal JS, accessible and fast. CI/CD through DockerHub to DigitalOcean.</p>
-                    <ul class="taglist">
-                        <li>Javalin</li><li>HTML</li><li>CSS</li><li>JS</li><li>Docker</li>
-                    </ul>
-                    <div class="card-actions">
-                        <a class="btn outline" href="#top">Back to top</a>
+                        <a class="btn" href="https://phonyfy.storgaardcoding.dk/api/songs/1" target="_blank" rel="noopener">API: /api/songs/1</a>
                     </div>
                 </article>
             </div>

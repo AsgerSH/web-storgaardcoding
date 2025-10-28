@@ -178,6 +178,23 @@ body {
 .footer-inner a { color: var(--muted); text-decoration: none; }
 .footer-inner a:hover { color: var(--text); }
 
-/* Reveal animations */
-.reveal { opacity: 0; transform: translateY(12px); }
-.reveal.is-visible { opacity: 1; transform: none; transition: opacity .6s ease, transform .6s ease; }
+/* Reveal animations (visible by default; only animate when JS has started) */
+.reveal { opacity: 1; transform: none; }
+.js-ready .reveal { opacity: 0; transform: translateY(12px); }
+.js-ready .reveal.is-visible { opacity: 1; transform: none; transition: opacity .6s ease, transform .6s ease; }
+
+/* API preview box */
+.api-preview {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin-top: 10px;
+    max-height: 200px;
+    overflow: auto;
+    font-size: .9rem;
+    color: var(--muted);
+    white-space: pre;
+}
+

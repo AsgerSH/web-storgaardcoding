@@ -6,6 +6,9 @@
     const navList = document.querySelector('#primary-nav');
     const themeBtn = document.getElementById('theme-toggle');
 
+    document.documentElement.classList.add('js-ready');
+
+
     // ---------- Theme handling ----------
     const storedTheme = localStorage.getItem('theme');
     if (storedTheme === 'light' || storedTheme === 'dark') {
@@ -105,6 +108,33 @@
         }
     }
     updateProjectStatuses();
+
+    // ---------- API JSON previews ----------
+    async function loadApiPreviews() {
+        const boxes = document.querySelectorAll('.api-preview');
+        for (const pre of boxes) {
+            const url = pre.dataset.endpoint;
+            if (!url) continue;
+            try {
+                const res = await fetch(url, {
+                    headers: { 'Accept': 'application/json' },
+                    cache: 'no-store',
+                });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const text = await res.text();
+                // Pretty-print if JSON
+                let output = text;
+                try { output = JSON.stringify(JSON.parse(text), null, 2); } catch {}
+                // Trim very long payloads
+                const limit = 1200;
+                pre.textContent = output.length > limit ? output.slice(0, limit) + '\n…' : output;
+            } catch (err) {
+                pre.textContent = 'Preview unavailable (likely CORS). Use the API link below to open it directly.';
+            }
+        }
+    }
+    loadApiPreviews();
+
 
     // ---------- Footer year ----------
     const y = document.getElementById('year');
