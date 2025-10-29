@@ -17,7 +17,34 @@
     --radius: 16px;
     --shadow: 0 10px 30px rgba(0,0,0,.35);
     --container: 1120px;
+    --sc-1: #7aa8ff;
+    --sc-2: #ff73b8;
 }
+
+/* SC monogram */
+.logo-sc{
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    width: 28px; height: 28px;
+    margin-right: .55rem;
+    border-radius: 9px;
+    font: 800 13px/1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+    letter-spacing: .5px;
+    color: #0b0e15; /* readable on the gradient */
+    background:
+            radial-gradient(120% 120% at 15% 10%, color-mix(in oklab, var(--sc-1) 75%, transparent) 0, transparent 60%),
+            radial-gradient(120% 120% at 90% 100%, color-mix(in oklab, var(--sc-2) 75%, transparent) 0, transparent 60%),
+            linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.04));
+    box-shadow:
+            0 1px 0 rgba(255,255,255,.15) inset,
+            0 10px 30px rgba(0,0,0,.25),
+            0 0 0 1px rgba(255,255,255,.06);
+}
+.dark .logo-sc{ color:#0b0e15; } /* remains readable in dark */
+
+.brand{ display:flex; align-items:center; gap:.25rem; }
+.brand-text{ font-weight:600; }
 
 /* Light theme overrides when system prefers light */
 @media (prefers-color-scheme: light) {
@@ -102,6 +129,9 @@ body {
     .nav-list[data-open="true"] { transform: none; opacity: 1; pointer-events: auto; }
 }
 
+.nav-list a svg { width: 18px; height: 18px; margin-right: 6px; vertical-align: -3px; }
+
+
 /* Hero */
 .hero { position: relative; overflow: clip; }
 .hero-inner { padding-block: clamp(64px, 14vw, 160px); text-align: center; }
@@ -114,7 +144,54 @@ body {
 .orb { position: absolute; width: 480px; height: 480px; border-radius: 50%; filter: blur(60px); opacity: .14; }
 .orb-a { background: var(--accent-2); top: -120px; right: -120px; }
 .orb-b { background: var(--accent-1); bottom: -120px; left: -120px; }
-.grid-lines { position: absolute; inset: 0; background-image: linear-gradient(to right, var(--line) 1px, transparent 1px), linear-gradient(to bottom, var(--line) 1px, transparent 1px); background-size: 40px 40px; }
+
+/* Modern animated glow grid for hero */
+.grid-lines {
+    position: absolute;
+    inset: 0;
+    --grid-size: 56px;
+    --grid-color: var(--line);
+
+    background-image:
+        /* grid (x & y) */
+            linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+            linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px),
+                /* soft color glows */
+            radial-gradient(700px 380px at 20% 15%, rgba(77,162,255,.14), transparent 60%),
+            radial-gradient(900px 520px at 85% 0%, rgba(255,92,147,.12), transparent 60%);
+
+    background-size:
+            var(--grid-size) var(--grid-size),
+            var(--grid-size) var(--grid-size),
+            auto,
+            auto;
+
+    background-position:
+            0 0,
+            0 0,
+            0 0,
+            0 0;
+
+    opacity: .8;
+
+    /* fade the grid toward the edges (Safari + øvrige) */
+    mask-image: radial-gradient(120% 90% at 50% 40%, rgba(0,0,0,1), rgba(0,0,0,0));
+
+    animation: gridShift 28s linear infinite;
+}
+
+@keyframes gridShift {
+    to {
+        background-position:
+                var(--grid-size) 0,   /* vandret grid driver langs X */
+                0 var(--grid-size),   /* lodret grid driver langs Y */
+                0 0,
+                0 0;
+    }
+}
+
+
+
 
 /* Sections */
 .section { padding-block: clamp(48px, 8vw, 96px); }
@@ -237,6 +314,15 @@ body {
 h1.headline {
     position: relative;
     z-index: 10000;     /* inside hero, definitely on top */
+}
+
+/* Ensure descenders aren't clipped */
+.hero, .hero .content, .hero .container { overflow: visible; }
+
+/* Cover common heading classnames */
+.hero h1, .hero .title, .hero .headline {
+    line-height: 1.08;       /* or 1.1 if you prefer more air */
+    padding-bottom: .15em;   /* room for descenders like g/j/p/y */
 }
 
 
