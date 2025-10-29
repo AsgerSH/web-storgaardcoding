@@ -15,7 +15,7 @@
 
     <link rel="icon" href="/favicon.ico" />
     <link rel="preload" href="/assets/css/styles.css" as="style" />
-    <link rel="stylesheet" href="/assets/css/styles.css?v=3" />
+    <link rel="stylesheet" href="/assets/css/styles.css?v=4" />
     <script src="/assets/js/app.js" defer></script>
 </head>
 <body>
@@ -41,15 +41,15 @@
                 <li><a href="#contact" data-nav>Contact</a></li>
                 <li><a href="https://github.com/AsgerSH" target="_blank" rel="noopener">GitHub</a></li>
                 <li>
-                    <button class="theme-toggle" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
-                        <svg class="icon sun" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M12 4V2m0 20v-2m8-8h2M2 12h2m13.07 6.07l1.41 1.41M5.52 5.52L4.11 4.11m0 15.78l1.41-1.41M18.49 5.51l1.41-1.4"/>
-                            <circle cx="12" cy="12" r="4"/>
-                        </svg>
-                        <svg class="icon moon" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
-                        </svg>
-                    </button>
+<!--                    <button class="theme-toggle" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme">-->
+<!--                        <svg class="icon sun" viewBox="0 0 24 24" aria-hidden="true">-->
+<!--                            <path d="M12 4V2m0 20v-2m8-8h2M2 12h2m13.07 6.07l1.41 1.41M5.52 5.52L4.11 4.11m0 15.78l1.41-1.41M18.49 5.51l1.41-1.4"/>-->
+<!--                            <circle cx="12" cy="12" r="4"/>-->
+<!--                        </svg>-->
+<!--                        <svg class="icon moon" viewBox="0 0 24 24" aria-hidden="true">-->
+<!--                            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>-->
+<!--                        </svg>-->
+<!--                    </button>-->
                 </li>
             </ul>
         </nav>
@@ -84,22 +84,44 @@
             </div>
 
             <div class="grid cards">
-                <!-- Project: Hotel API -->
+                <!-- Hotel API -->
                 <article class="card project-card reveal" data-url="https://hotels.storgaardcoding.dk/">
                     <div class="card-head">
                         <h3>Hotel API</h3>
                         <span class="status-pill" data-status>Checking…</span>
                     </div>
-
                     <p class="card-text">
                         RESTful backend for hotels with CRUD endpoints and JPA/Hibernate. Containerized and deployed with Docker + Caddy.
                     </p>
+                    <ul class="taglist"><li>Java</li><li>Javalin</li><li>JPA</li><li>Hibernate</li><li>Docker</li></ul>
 
-                    <ul class="taglist">
-                        <li>Java</li><li>Javalin</li><li>JPA</li><li>Hibernate</li><li>Docker</li>
-                    </ul>
+                    <!-- API Preview -->
+                    <div class="api-preview-card" data-method="GET">
+                        <div class="api-bar">
+                            <span class="api-method get">GET</span>
+                            <code class="api-path">/api/hotels/1</code>
+                            <div class="api-actions">
+                                <button class="btn-mini" data-copy="curl">Copy cURL</button>
+                                <span class="api-dot" title="status"></span>
+                                <span class="api-latency" title="latency">—</span>
+                            </div>
+                        </div>
+                        <div class="api-tabs">
+                            <button class="api-tab active" data-tab="response">Response</button>
+                            <button class="api-tab" data-tab="curl">cURL</button>
+                            <button class="api-tab" data-tab="headers">Headers</button>
+                        </div>
+                        <pre class="api-output" data-tab="response"><code>{ loading: true }</code></pre>
+                        <pre class="api-output hidden" data-tab="curl"><code></code></pre>
+                        <pre class="api-output hidden" data-tab="headers"><code></code></pre>
 
-                    <pre class="api-preview" data-endpoint="https://hotels.storgaardcoding.dk/api/hotels/1">Loading API preview…</pre>
+                        <div class="api-controls">
+                            <select class="api-endpoint">
+                                <option value="https://hotels.storgaardcoding.dk/api/hotels/1">GET /api/hotels/1</option>
+                            </select>
+                            <a class="btn-mini" data-open>Open</a>
+                        </div>
+                    </div>
 
                     <div class="card-actions">
                         <a class="btn outline" href="https://hotels.storgaardcoding.dk/" target="_blank" rel="noopener">Open site</a>
@@ -107,43 +129,88 @@
                     </div>
                 </article>
 
-                <!-- Project: Phonyfy API -->
+                <!-- Phonyfy API -->
                 <article class="card project-card reveal" data-url="https://phonyfy.storgaardcoding.dk/">
                     <div class="card-head">
                         <h3>Phonyfy (Fake Spotify API)</h3>
                         <span class="status-pill" data-status>Checking…</span>
                     </div>
+                    <p class="card-text">Demo streaming API that exposes songs and artists. Built with Javalin and deployed with Docker + Caddy.</p>
+                    <ul class="taglist"><li>Java</li><li>Javalin</li><li>JPA</li><li>Docker</li></ul>
 
-                    <p class="card-text">
-                        Demo streaming API that exposes songs and artists. Built with Javalin and deployed with Docker + Caddy.
-                    </p>
+                    <div class="api-preview-card" data-method="GET">
+                        <div class="api-bar">
+                            <span class="api-method get">GET</span>
+                            <code class="api-path">/api/songs</code>
+                            <div class="api-actions">
+                                <button class="btn-mini" data-copy="curl">Copy cURL</button>
+                                <span class="api-dot" title="status"></span>
+                                <span class="api-latency" title="latency">—</span>
+                            </div>
+                        </div>
+                        <div class="api-tabs">
+                            <button class="api-tab active" data-tab="response">Response</button>
+                            <button class="api-tab" data-tab="curl">cURL</button>
+                            <button class="api-tab" data-tab="headers">Headers</button>
+                        </div>
+                        <pre class="api-output" data-tab="response"><code>{ loading: true }</code></pre>
+                        <pre class="api-output hidden" data-tab="curl"><code></code></pre>
+                        <pre class="api-output hidden" data-tab="headers"><code></code></pre>
 
-                    <ul class="taglist">
-                        <li>Java</li><li>Javalin</li><li>JPA</li><li>Docker</li>
-                    </ul>
-
-                    <pre class="api-preview" data-endpoint="https://phonyfy.storgaardcoding.dk/api/songs/1">Loading API preview…</pre>
+                        <div class="api-controls">
+                            <select class="api-endpoint">
+                                <option value="https://phonyfy.storgaardcoding.dk/api/songs">GET /api/songs</option>
+                                <option value="https://phonyfy.storgaardcoding.dk/api/artists">GET /api/artists</option>
+                                <option value="https://phonyfy.storgaardcoding.dk/api/playlists/user/asger">GET /api/playlists/user/asger</option>
+                            </select>
+                            <a class="btn-mini" data-open>Open</a>
+                        </div>
+                    </div>
 
                     <div class="card-actions">
                         <a class="btn outline" href="https://phonyfy.storgaardcoding.dk/" target="_blank" rel="noopener">Open site</a>
-                        <a class="btn" href="https://phonyfy.storgaardcoding.dk/api/songs/1" target="_blank" rel="noopener">API: /api/songs/1</a>
+                        <a class="btn" href="https://phonyfy.storgaardcoding.dk/api/songs" target="_blank" rel="noopener">API: /api/songs</a>
                     </div>
                 </article>
 
-                <!-- Project: Tripplanner API -->
+                <!-- Tripplanner API -->
                 <article class="card project-card reveal" data-url="https://tripplanner.storgaardcoding.dk/">
                     <div class="card-head">
                         <h3>Tripplanner API (Exam project)</h3>
                         <span class="status-pill" data-status>Checking…</span>
                     </div>
-
                     <p class="card-text">Demo trip planning API that shows trips, guides and what to pack.</p>
+                    <ul class="taglist"><li>Java</li><li>Javalin</li><li>JPA</li><li>Docker</li><li>Exam</li></ul>
 
-                    <ul class="taglist">
-                        <li>Java</li><li>Javalin</li><li>JPA</li><li>Docker</li><li>Exam</li>
-                    </ul>
+                    <div class="api-preview-card" data-method="GET">
+                        <div class="api-bar">
+                            <span class="api-method get">GET</span>
+                            <code class="api-path">/api/trips</code>
+                            <div class="api-actions">
+                                <button class="btn-mini" data-copy="curl">Copy cURL</button>
+                                <span class="api-dot" title="status"></span>
+                                <span class="api-latency" title="latency">—</span>
+                            </div>
+                        </div>
+                        <div class="api-tabs">
+                            <button class="api-tab active" data-tab="response">Response</button>
+                            <button class="api-tab" data-tab="curl">cURL</button>
+                            <button class="api-tab" data-tab="headers">Headers</button>
+                        </div>
+                        <pre class="api-output" data-tab="response"><code>{ loading: true }</code></pre>
+                        <pre class="api-output hidden" data-tab="curl"><code></code></pre>
+                        <pre class="api-output hidden" data-tab="headers"><code></code></pre>
 
-                    <pre class="api-preview" data-endpoint="https://tripplanner.storgaardcoding.dk/api/trips/1">Loading API preview…</pre>
+                        <div class="api-controls">
+                            <select class="api-endpoint">
+                                <option value="https://tripplanner.storgaardcoding.dk/api/trips">GET /api/trips</option>
+                                <option value="https://tripplanner.storgaardcoding.dk/api/guides">GET /api/guides</option>
+                                <option value="https://tripplanner.storgaardcoding.dk/api/trips/1">GET /api/trips/1</option>
+                                <option value="https://tripplanner.storgaardcoding.dk/api/trips/1/packing">GET /api/trips/1/packing</option>
+                            </select>
+                            <a class="btn-mini" data-open>Open</a>
+                        </div>
+                    </div>
 
                     <div class="card-actions">
                         <a class="btn outline" href="https://tripplanner.storgaardcoding.dk/" target="_blank" rel="noopener">Open site</a>
