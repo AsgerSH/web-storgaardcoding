@@ -1,5 +1,5 @@
 /* ==========================================================================
-   StorgaardCoding — Frontend JS (cleaned, same behavior)
+   StorgaardCoding — Frontend JS
    ========================================================================== */
 (() => {
     const html = document.documentElement;
@@ -7,7 +7,6 @@
     const navList   = document.querySelector('#primary-nav');
     const themeBtn  = document.getElementById('theme-toggle');
 
-    // JS-ready flag for CSS reveal animations
     html.classList.add('js-ready');
 
     /* ---------- Theme handling ---------- */
@@ -17,8 +16,6 @@
     } else {
         html.setAttribute('data-theme', 'system');
     }
-
-    // Keep color-scheme in sync when using "system"
     if (window.matchMedia) {
         const mq = window.matchMedia('(prefers-color-scheme: dark)');
         const apply = (e) => {
@@ -28,7 +25,6 @@
         };
         mq.addEventListener('change', apply);
     }
-
     themeBtn?.addEventListener('click', () => {
         const current = html.getAttribute('data-theme');
         const next = current === 'dark' ? 'light' : (current === 'light' ? 'system' : 'dark');
@@ -86,7 +82,6 @@
             return false;
         }
     }
-
     async function updateProjectStatuses() {
         const cards = document.querySelectorAll('.project-card');
         for (const card of cards) {
@@ -105,191 +100,250 @@
     }
     updateProjectStatuses();
 
-    /* ---------- API JSON previews ---------- */
-    async function loadApiPreviews() {
-        const boxes = document.querySelectorAll('.api-preview');
-        for (const pre of boxes) {
-            const url = pre.dataset.endpoint;
-            if (!url) continue;
-            try {
-                const res = await fetch(url, { headers: { 'Accept': 'application/json' }, cache: 'no-store' });
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                const text = await res.text();
-                let output = text;
-                try { output = JSON.stringify(JSON.parse(text), null, 2); } catch {}
-                const limit = 1200;
-                pre.textContent = output.length > limit ? output.slice(0, limit) + '\n…' : output;
-            } catch {
-                pre.textContent = 'Preview unavailable (likely CORS). Use the API link below to open it directly.';
-            }
+    /* ---------- API Preview: tabs + cURL + headers + fallback ---------- */
+    (function(){
+        const q  = (sel, el=document) => el.querySelector(sel);
+        const qa = (sel, el=document) => [...el.querySelectorAll(sel)];
+        const toCurl = (method, url) => `curl -s -X ${method} "${url}" -H "Accept: application/json"`;
+        const pretty = (obj) => { try { return JSON.stringify(obj, null, 2); } catch { return String(obj); } };
+
+        async function fetchPreview(url, method='GET') {
+            const t0 = performance.now();
+            const res = await fetch(url, { method, headers: { 'Accept':'application/json' }, cache: 'no-store' });
+            const t1 = performance.now();
+            const latency = Math.round(t1 - t0);
+
+            const headers = {};
+            res.headers.forEach((v, k) => headers[k] = v);
+
+            const text = await res.text();
+            let body = text;
+            try { body = JSON.stringify(JSON.parse(text), null, 2); } catch {}
+
+            return { ok: res.ok, status: res.status, latency, headers, body };
         }
-    }
-    loadApiPreviews();
+
+        function wireTabs(card) {
+            qa('.api-tab', card).forEach(btn => {
+                btn.addEventListener('click', () => {
+                    qa('.api-tab', card).forEach(b => b.classList.toggle('active', b === btn));
+                    qa('.api-output', card).forEach(o => o.classList.toggle('hidden', o.dataset.tab !== btn.dataset.tab));
+                });
+            });
+        }
+
+        async function renderCard(card) {
+            const method = card.dataset.method || 'GET';
+            const select = q('.api-endpoint', card);
+            const openBtn = q('[data-open]', card);
+
+            async function run(url) {
+                const pathEl = q('.api-path', card);
+                try { pathEl.textContent = new URL(url).pathname; } catch { pathEl.textContent = url; }
+
+                // Fill cURL immediately
+                q('.api-output[data-tab="curl"] code', card).textContent = toCurl(method, url);
+
+                // Reset UI
+                const dot = q('.api-dot', card);
+                const latencyEl = q('.api-latency', card);
+                const respOut = q('.api-output[data-tab="response"] code', card);
+                const hdrOut  = q('.api-output[data-tab="headers"] code', card);
+                respOut.textContent = '{ loading: true }';
+                hdrOut.textContent = '';
+
+                try {
+                    const { ok, latency, headers, body } = await fetchPreview(url, method);
+                    latencyEl.textContent = ok ? `${latency} ms` : '—';
+                    dot?.classList.toggle('up', ok);
+                    dot?.classList.toggle('down', !ok);
+                    hdrOut.textContent = pretty(headers);
+                    respOut.textContent = body;
+                    // If blocked by CORS, auto switch to cURL tab
+                    if (!ok) q('.api-tab[data-tab="curl"]', card)?.click();
+                } catch (err) {
+                    latencyEl.textContent = '—';
+                    dot?.classList.remove('up'); dot?.classList.add('down');
+                    respOut.textContent = '{ /* Preview blocked by CORS or offline. Use the cURL tab. */ }';
+                    hdrOut.textContent = pretty({ error: String(err) });
+                    q('.api-tab[data-tab="curl"]', card)?.click();
+                }
+            }
+
+            // Initial
+            await run(select.value);
+
+            // On change
+            select.addEventListener('change', () => run(select.value));
+
+            // Open button
+            openBtn?.addEventListener('click', () => { window.open(select.value, '_blank', 'noopener'); });
+
+            // Tabs
+            wireTabs(card);
+
+            // Copy cURL button
+            q('.btn-mini[data-copy="curl"]', card)?.addEventListener('click', async (e) => {
+                await navigator.clipboard.writeText(toCurl(method, select.value));
+                const btn = e.currentTarget;
+                const old = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = old, 900);
+            });
+        }
+
+        function boot() {
+            qa('.api-preview-card').forEach(renderCard);
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+        else boot();
+    })();
 
     /* ---------- Footer year ---------- */
     const y = document.getElementById('year');
     if (y) y.textContent = new Date().getFullYear();
 })();
 
-
-// === Starfield background (CodePen by @hakimel, adapted) ===
+/* === Starfield background (CodePen by @hakimel, adapted & seam-safe) === */
 (function(){
-  const initStarfield = () => {
-    // Ensure one canvas only
-    let canvas = document.getElementById('stars');
-    if (!canvas) {
-      canvas = document.createElement('canvas');
-      canvas.id = 'stars';
-      document.body.prepend(canvas);
-    }
-    const context = canvas.getContext('2d');
+    const initStarfield = () => {
+        let canvas = document.getElementById('stars');
+        if (!canvas) { canvas = document.createElement('canvas'); canvas.id = 'stars'; document.body.prepend(canvas); }
+        const context = canvas.getContext('2d');
 
-    const STAR_COLOR = '#fff';
-    const STAR_SIZE = 3;
-    const STAR_MIN_SCALE = 0.2;
-    const OVERFLOW_THRESHOLD = 100;
-    const STAR_COUNT = ( window.innerWidth + window.innerHeight ) / 5;
+        const STAR_COLOR = '#fff';
+        const STAR_SIZE = 3;
+        const STAR_MIN_SCALE = 0.2;
+        const OVERFLOW_THRESHOLD = 100;
+        const STAR_COUNT = ( window.innerWidth + window.innerHeight ) / 5;
 
-    let scale = 1, width, height;
-    let stars = [];
-    let pointerX, pointerY;
-    let velocity = { x: 0, y: 0, tx: 0, ty: 0, z: 0.00025 };
-    let touchInput = false;
+        let scale = 1, width, height;
+        let stars = [];
+        let pointerX, pointerY;
+        let velocity = { x: 0, y: 0, tx: 0, ty: 0, z: 0.00025 };
+        let touchInput = false;
 
-    function generate() {
-      stars.length = 0;
-      for (let i = 0; i < STAR_COUNT; i++) {
-        stars.push({ x: 0, y: 0, z: STAR_MIN_SCALE + Math.random() * (1 - STAR_MIN_SCALE) });
-      }
-    }
-    function placeStar(star){ star.x = Math.random()*width; star.y = Math.random()*height; }
-    function recycleStar(star){
-      let direction = 'z', vx = Math.abs(velocity.x), vy = Math.abs(velocity.y);
-      if (vx > 1 || vy > 1) {
-        let axis = (vx > vy) ? (Math.random() < vx/(vx+vy) ? 'h':'v') : (Math.random() < vy/(vx+vy) ? 'v':'h');
-        direction = axis==='h' ? (velocity.x > 0 ? 'l':'r') : (velocity.y > 0 ? 't':'b');
-      }
-      star.z = STAR_MIN_SCALE + Math.random() * (1 - STAR_MIN_SCALE);
-      if (direction==='z'){ star.z=0.1; star.x=Math.random()*width; star.y=Math.random()*height; }
-      else if(direction==='l'){ star.x=-OVERFLOW_THRESHOLD; star.y=height*Math.random(); }
-      else if(direction==='r'){ star.x=width+OVERFLOW_THRESHOLD; star.y=height*Math.random(); }
-      else if(direction==='t'){ star.x=width*Math.random(); star.y=-OVERFLOW_THRESHOLD; }
-      else if(direction==='b'){ star.x=width*Math.random(); star.y=height+OVERFLOW_THRESHOLD; }
-    }
-      function resize() {
-          const cssW = canvas.clientWidth;     // CSS pixels
-          const cssH = canvas.clientHeight;
-          scale = window.devicePixelRatio || 1;
-
-          canvas.width  = Math.round(cssW * scale);
-          canvas.height = Math.round(cssH * scale);
-
-          context.setTransform(1, 0, 0, 1, 0, 0);
-          context.scale(scale, scale);
-
-          width  = cssW;
-          height = cssH;
-
-          stars.forEach(placeStar);
-      }
-
-    function update(){
-      velocity.tx *= 0.90; velocity.ty *= 0.90;
-      velocity.x += (velocity.tx - velocity.x)*0.6;
-      velocity.y += (velocity.ty - velocity.y)*0.6;
-      stars.forEach((star)=>{
-        star.x += velocity.x * star.z; star.y += velocity.y * star.z;
-        star.x += (star.x - width/2) * velocity.z * star.z;
-        star.y += (star.y - height/2) * velocity.z * star.z;
-        star.z += velocity.z;
-        if (star.x < -OVERFLOW_THRESHOLD || star.x > width + OVERFLOW_THRESHOLD ||
-            star.y < -OVERFLOW_THRESHOLD || star.y > height + OVERFLOW_THRESHOLD) {
-          recycleStar(star);
+        function generate() {
+            stars.length = 0;
+            for (let i = 0; i < STAR_COUNT; i++) {
+                stars.push({ x: 0, y: 0, z: STAR_MIN_SCALE + Math.random() * (1 - STAR_MIN_SCALE) });
+            }
         }
-      });
-    }
-      function render() {
-          const ctx = context;
+        function placeStar(star){ star.x = Math.random()*width; star.y = Math.random()*height; }
+        function recycleStar(star){
+            let direction = 'z', vx = Math.abs(velocity.x), vy = Math.abs(velocity.y);
+            if (vx > 1 || vy > 1) {
+                let axis = (vx > vy) ? (Math.random() < vx/(vx+vy) ? 'h':'v') : (Math.random() < vy/(vx+vy) ? 'v':'h');
+                direction = axis==='h' ? (velocity.x > 0 ? 'l':'r') : (velocity.y > 0 ? 't':'b');
+            }
+            star.z = STAR_MIN_SCALE + Math.random() * (1 - STAR_MIN_SCALE);
+            if (direction==='z'){ star.z=0.1; star.x=Math.random()*width; star.y=Math.random()*height; }
+            else if(direction==='l'){ star.x=-OVERFLOW_THRESHOLD; star.y=height*Math.random(); }
+            else if(direction==='r'){ star.x=width+OVERFLOW_THRESHOLD; star.y=height*Math.random(); }
+            else if(direction==='t'){ star.x=width*Math.random(); star.y=-OVERFLOW_THRESHOLD; }
+            else if(direction==='b'){ star.x=width*Math.random(); star.y=height+OVERFLOW_THRESHOLD; }
+        }
 
-          // paint gradients inside the canvas (one layer, no seams)
-          ctx.globalCompositeOperation = 'source-over';
-          ctx.globalAlpha = 1;
+        function resize() {
+            const cssW = canvas.clientWidth;
+            const cssH = canvas.clientHeight;
+            scale = window.devicePixelRatio || 1;
 
-          paintBackdrop(ctx, width, height);
+            canvas.width  = Math.round(cssW * scale);
+            canvas.height = Math.round(cssH * scale);
 
-          // draw stars on top
-          stars.forEach((star) => {
-              ctx.beginPath();
-              ctx.lineCap = 'round';
-              ctx.lineWidth = STAR_SIZE * star.z;   // ctx is already scaled to CSS px
-              ctx.globalAlpha = 0.35 + 0.35 * Math.random();
-              ctx.strokeStyle = '#fff';
-              ctx.moveTo(star.x, star.y);
+            context.setTransform(1, 0, 0, 1, 0, 0);
+            context.scale(scale, scale);
 
-              let tailX = velocity.x * 2, tailY = velocity.y * 2;
-              if (Math.abs(tailX) < 0.1) tailX = 0.5;
-              if (Math.abs(tailY) < 0.1) tailY = 0.5;
+            width  = cssW;
+            height = cssH;
 
-              ctx.lineTo(star.x + tailX, star.y + tailY);
-              ctx.stroke();
-          });
+            stars.forEach(placeStar);
+        }
 
-          ctx.globalAlpha = 1;
-          requestAnimationFrame(loop);
-      }
+        function update(){
+            velocity.tx *= 0.90; velocity.ty *= 0.90;
+            velocity.x += (velocity.tx - velocity.x)*0.6;
+            velocity.y += (velocity.ty - velocity.y)*0.6;
+            stars.forEach((star)=>{
+                star.x += velocity.x * star.z; star.y += velocity.y * star.z;
+                star.x += (star.x - width/2) * velocity.z * star.z;
+                star.y += (star.y - height/2) * velocity.z * star.z;
+                star.z += velocity.z;
+                if (star.x < -OVERFLOW_THRESHOLD || star.x > width + OVERFLOW_THRESHOLD ||
+                    star.y < -OVERFLOW_THRESHOLD || star.y > height + OVERFLOW_THRESHOLD) {
+                    recycleStar(star);
+                }
+            });
+        }
 
-    function loop(){ update(); render(); }
-    function movePointer(x,y){
-      if (typeof pointerX === 'number' && typeof pointerY === 'number') {
-        const ox = x - pointerX, oy = y - pointerY;
-        velocity.tx += (ox / (40*scale)) * (touchInput ? 1 : -1);
-        velocity.ty += (oy / (40*scale)) * (touchInput ? 1 : -1);
-      }
-      pointerX = x; pointerY = y;
-    }
-    function onMouseMove(e){ touchInput=false; movePointer(e.clientX, e.clientY); }
-    function onTouchMove(e){ touchInput=true; movePointer(e.touches[0].clientX, e.touches[0].clientY); e.preventDefault(); }
-    function onMouseLeave(){ pointerX = null; pointerY = null; }
+        function render() {
+            const ctx = context;
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.globalAlpha = 1;
+            paintBackdrop(ctx, width, height);
 
-    // Bind
-    window.addEventListener('resize', resize);
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('touchmove', onTouchMove, { passive: false });
-    document.addEventListener('touchend', onMouseLeave);
-    document.addEventListener('mouseleave', onMouseLeave);
+            stars.forEach((star) => {
+                ctx.beginPath();
+                ctx.lineCap = 'round';
+                ctx.lineWidth = STAR_SIZE * star.z;
+                ctx.globalAlpha = 0.35 + 0.35 * Math.random();
+                ctx.strokeStyle = STAR_COLOR;
+                ctx.moveTo(star.x, star.y);
 
-    generate();
-    resize();
-    requestAnimationFrame(loop);
-  };
+                let tailX = velocity.x * 2, tailY = velocity.y * 2;
+                if (Math.abs(tailX) < 0.1) tailX = 0.5;
+                if (Math.abs(tailY) < 0.1) tailY = 0.5;
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initStarfield);
-  } else {
-    initStarfield();
-  }
+                ctx.lineTo(star.x + tailX, star.y + tailY);
+                ctx.stroke();
+            });
+
+            ctx.globalAlpha = 1;
+            requestAnimationFrame(loop);
+        }
+
+        function loop(){ update(); render(); }
+        function movePointer(x,y){
+            if (typeof pointerX === 'number' && typeof pointerY === 'number') {
+                const ox = x - pointerX, oy = y - pointerY;
+                velocity.tx += (ox / (40*scale)) * (touchInput ? 1 : -1);
+                velocity.ty += (oy / (40*scale)) * (touchInput ? 1 : -1);
+            }
+            pointerX = x; pointerY = y;
+        }
+        function onMouseMove(e){ touchInput=false; movePointer(e.clientX, e.clientY); }
+        function onTouchMove(e){ touchInput=true; movePointer(e.touches[0].clientX, e.touches[0].clientY); e.preventDefault(); }
+        function onMouseLeave(){ pointerX = null; pointerY = null; }
+
+        window.addEventListener('resize', resize);
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('touchmove', onTouchMove, { passive: false });
+        document.addEventListener('touchend', onMouseLeave);
+        document.addEventListener('mouseleave', onMouseLeave);
+
+        generate(); resize(); requestAnimationFrame(loop);
+    };
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initStarfield);
+    else initStarfield();
 })();
 
 function paintBackdrop(ctx, w, h) {
-    // base color from your scheme (instead of pure black)
-    ctx.fillStyle = '#0b0d10';   // or: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim()
-    ctx.fillRect(-2, -2, w + 4, h + 4); // tiny overscan
+    // base color from your scheme
+    ctx.fillStyle = '#0b0d10';
+    ctx.fillRect(-2, -2, w + 4, h + 4);
 
-    // first radial gradient (top-right, purple-ish)
+    // purple-ish glow (top-right)
     const g1 = ctx.createRadialGradient(w * 0.85, h * 0.0, 0, w * 0.85, h * 0.0, Math.max(w, h) * 0.9);
-    g1.addColorStop(0, 'rgba(121,68,154,0.04)');
+    g1.addColorStop(0, 'rgba(121,68,154,0.07)');
     g1.addColorStop(1, 'rgba(121,68,154,0)');
-    ctx.fillStyle = g1;
-    ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = g1; ctx.fillRect(0, 0, w, h);
 
-    // second radial gradient (20%/80%, cyan-ish)
+    // cyan-ish glow (20% / 80%)
     const g2 = ctx.createRadialGradient(w * 0.20, h * 0.80, 0, w * 0.20, h * 0.80, Math.max(w, h) * 0.7);
-    g2.addColorStop(0, 'rgba(41,196,255,0.04)');
+    g2.addColorStop(0, 'rgba(41,196,255,0.07)');
     g2.addColorStop(1, 'rgba(41,196,255,0)');
-    ctx.fillStyle = g2;
-    ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = g2; ctx.fillRect(0, 0, w, h);
 }
-
-// === /Starfield ===
-
-
+/* === /Starfield === */
