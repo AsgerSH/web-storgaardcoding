@@ -130,3 +130,166 @@
     const y = document.getElementById('year');
     if (y) y.textContent = new Date().getFullYear();
 })();
+
+
+// === Starfield background (CodePen by @hakimel, adapted) ===
+(function(){
+  const initStarfield = () => {
+    // Ensure one canvas only
+    let canvas = document.getElementById('stars');
+    if (!canvas) {
+      canvas = document.createElement('canvas');
+      canvas.id = 'stars';
+      document.body.prepend(canvas);
+    }
+    const context = canvas.getContext('2d');
+
+    const STAR_COLOR = '#fff';
+    const STAR_SIZE = 3;
+    const STAR_MIN_SCALE = 0.2;
+    const OVERFLOW_THRESHOLD = 100;
+    const STAR_COUNT = ( window.innerWidth + window.innerHeight ) / 5;
+
+    let scale = 1, width, height;
+    let stars = [];
+    let pointerX, pointerY;
+    let velocity = { x: 0, y: 0, tx: 0, ty: 0, z: 0.00025 };
+    let touchInput = false;
+
+    function generate() {
+      stars.length = 0;
+      for (let i = 0; i < STAR_COUNT; i++) {
+        stars.push({ x: 0, y: 0, z: STAR_MIN_SCALE + Math.random() * (1 - STAR_MIN_SCALE) });
+      }
+    }
+    function placeStar(star){ star.x = Math.random()*width; star.y = Math.random()*height; }
+    function recycleStar(star){
+      let direction = 'z', vx = Math.abs(velocity.x), vy = Math.abs(velocity.y);
+      if (vx > 1 || vy > 1) {
+        let axis = (vx > vy) ? (Math.random() < vx/(vx+vy) ? 'h':'v') : (Math.random() < vy/(vx+vy) ? 'v':'h');
+        direction = axis==='h' ? (velocity.x > 0 ? 'l':'r') : (velocity.y > 0 ? 't':'b');
+      }
+      star.z = STAR_MIN_SCALE + Math.random() * (1 - STAR_MIN_SCALE);
+      if (direction==='z'){ star.z=0.1; star.x=Math.random()*width; star.y=Math.random()*height; }
+      else if(direction==='l'){ star.x=-OVERFLOW_THRESHOLD; star.y=height*Math.random(); }
+      else if(direction==='r'){ star.x=width+OVERFLOW_THRESHOLD; star.y=height*Math.random(); }
+      else if(direction==='t'){ star.x=width*Math.random(); star.y=-OVERFLOW_THRESHOLD; }
+      else if(direction==='b'){ star.x=width*Math.random(); star.y=height+OVERFLOW_THRESHOLD; }
+    }
+      function resize() {
+          const cssW = canvas.clientWidth;     // CSS pixels
+          const cssH = canvas.clientHeight;
+          scale = window.devicePixelRatio || 1;
+
+          canvas.width  = Math.round(cssW * scale);
+          canvas.height = Math.round(cssH * scale);
+
+          context.setTransform(1, 0, 0, 1, 0, 0);
+          context.scale(scale, scale);
+
+          width  = cssW;
+          height = cssH;
+
+          stars.forEach(placeStar);
+      }
+
+    function update(){
+      velocity.tx *= 0.90; velocity.ty *= 0.90;
+      velocity.x += (velocity.tx - velocity.x)*0.6;
+      velocity.y += (velocity.ty - velocity.y)*0.6;
+      stars.forEach((star)=>{
+        star.x += velocity.x * star.z; star.y += velocity.y * star.z;
+        star.x += (star.x - width/2) * velocity.z * star.z;
+        star.y += (star.y - height/2) * velocity.z * star.z;
+        star.z += velocity.z;
+        if (star.x < -OVERFLOW_THRESHOLD || star.x > width + OVERFLOW_THRESHOLD ||
+            star.y < -OVERFLOW_THRESHOLD || star.y > height + OVERFLOW_THRESHOLD) {
+          recycleStar(star);
+        }
+      });
+    }
+      function render() {
+          const ctx = context;
+
+          // paint gradients inside the canvas (one layer, no seams)
+          ctx.globalCompositeOperation = 'source-over';
+          ctx.globalAlpha = 1;
+
+          paintBackdrop(ctx, width, height);
+
+          // draw stars on top
+          stars.forEach((star) => {
+              ctx.beginPath();
+              ctx.lineCap = 'round';
+              ctx.lineWidth = STAR_SIZE * star.z;   // ctx is already scaled to CSS px
+              ctx.globalAlpha = 0.35 + 0.35 * Math.random();
+              ctx.strokeStyle = '#fff';
+              ctx.moveTo(star.x, star.y);
+
+              let tailX = velocity.x * 2, tailY = velocity.y * 2;
+              if (Math.abs(tailX) < 0.1) tailX = 0.5;
+              if (Math.abs(tailY) < 0.1) tailY = 0.5;
+
+              ctx.lineTo(star.x + tailX, star.y + tailY);
+              ctx.stroke();
+          });
+
+          ctx.globalAlpha = 1;
+          requestAnimationFrame(loop);
+      }
+
+    function loop(){ update(); render(); }
+    function movePointer(x,y){
+      if (typeof pointerX === 'number' && typeof pointerY === 'number') {
+        const ox = x - pointerX, oy = y - pointerY;
+        velocity.tx += (ox / (40*scale)) * (touchInput ? 1 : -1);
+        velocity.ty += (oy / (40*scale)) * (touchInput ? 1 : -1);
+      }
+      pointerX = x; pointerY = y;
+    }
+    function onMouseMove(e){ touchInput=false; movePointer(e.clientX, e.clientY); }
+    function onTouchMove(e){ touchInput=true; movePointer(e.touches[0].clientX, e.touches[0].clientY); e.preventDefault(); }
+    function onMouseLeave(){ pointerX = null; pointerY = null; }
+
+    // Bind
+    window.addEventListener('resize', resize);
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('touchmove', onTouchMove, { passive: false });
+    document.addEventListener('touchend', onMouseLeave);
+    document.addEventListener('mouseleave', onMouseLeave);
+
+    generate();
+    resize();
+    requestAnimationFrame(loop);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initStarfield);
+  } else {
+    initStarfield();
+  }
+})();
+
+function paintBackdrop(ctx, w, h) {
+    // base color from your scheme (instead of pure black)
+    ctx.fillStyle = '#0b0d10';   // or: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim()
+    ctx.fillRect(-2, -2, w + 4, h + 4); // tiny overscan
+
+    // first radial gradient (top-right, purple-ish)
+    const g1 = ctx.createRadialGradient(w * 0.85, h * 0.0, 0, w * 0.85, h * 0.0, Math.max(w, h) * 0.9);
+    g1.addColorStop(0, 'rgba(121,68,154,0.04)');
+    g1.addColorStop(1, 'rgba(121,68,154,0)');
+    ctx.fillStyle = g1;
+    ctx.fillRect(0, 0, w, h);
+
+    // second radial gradient (20%/80%, cyan-ish)
+    const g2 = ctx.createRadialGradient(w * 0.20, h * 0.80, 0, w * 0.20, h * 0.80, Math.max(w, h) * 0.7);
+    g2.addColorStop(0, 'rgba(41,196,255,0.04)');
+    g2.addColorStop(1, 'rgba(41,196,255,0)');
+    ctx.fillStyle = g2;
+    ctx.fillRect(0, 0, w, h);
+}
+
+// === /Starfield ===
+
+
