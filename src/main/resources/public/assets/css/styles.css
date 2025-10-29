@@ -198,3 +198,45 @@ body {
     white-space: pre;
 }
 
+/* Force the entire hero section above every other stacking context */
+.hero {
+    position: relative;
+    z-index: 9999;      /* lifts the whole section */
+}
+
+
+/* 2) Backdrop stays behind inside that context */
+.backdrop {
+    position: absolute;      /* you already have this */
+    inset: 0;                /* you already have this */
+    pointer-events: none;    /* you already have this */
+    z-index: 0;              /* <-- change from -1 to 0 */
+}
+
+/* Force a clear stacking order in the hero */
+.hero {
+    position: relative;         /* create a containing context */
+    z-index: 0;                 /* own stacking context */
+}
+
+.backdrop,
+.backdrop * {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0 !important;   /* absolutely lowest inside hero */
+}
+
+
+/* Content above backdrop */
+.hero .hero-inner {
+    position: relative;
+    z-index: 2 !important;
+}
+
+h1.headline {
+    position: relative;
+    z-index: 10000;     /* inside hero, definitely on top */
+}
+
+
