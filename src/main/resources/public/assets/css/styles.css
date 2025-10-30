@@ -278,3 +278,5 @@ canvas#stars {
     transform: translateZ(0);
     backface-visibility: hidden;
 }
+/* mobile: don't eat touches */
+canvas#stars { pointer-events: none; }

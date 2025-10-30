@@ -9,28 +9,9 @@
 
     html.classList.add('js-ready');
 
-    /* ---------- Theme handling ---------- */
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme === 'light' || storedTheme === 'dark') {
-        html.setAttribute('data-theme', storedTheme);
-    } else {
-        html.setAttribute('data-theme', 'system');
-    }
-    if (window.matchMedia) {
-        const mq = window.matchMedia('(prefers-color-scheme: dark)');
-        const apply = (e) => {
-            if (html.getAttribute('data-theme') === 'system') {
-                html.style.colorScheme = e.matches ? 'dark' : 'light';
-            }
-        };
-        mq.addEventListener('change', apply);
-    }
-    themeBtn?.addEventListener('click', () => {
-        const current = html.getAttribute('data-theme');
-        const next = current === 'dark' ? 'light' : (current === 'light' ? 'system' : 'dark');
-        html.setAttribute('data-theme', next);
-        localStorage.setItem('theme', next);
-    });
+    html.setAttribute('data-theme', 'dark');
+    html.style.colorScheme = 'dark';
+    try { localStorage.setItem('theme', 'dark'); } catch {}
 
     /* ---------- Mobile nav ---------- */
     navToggle?.addEventListener('click', () => {
@@ -313,14 +294,21 @@
             pointerX = x; pointerY = y;
         }
         function onMouseMove(e){ touchInput=false; movePointer(e.clientX, e.clientY); }
-        function onTouchMove(e){ touchInput=true; movePointer(e.touches[0].clientX, e.touches[0].clientY); e.preventDefault(); }
+        function onTouchMove(e){ touchInput=true; movePointer(e.touches[0].clientX, e.touches[0].clientY); }
         function onMouseLeave(){ pointerX = null; pointerY = null; }
 
         window.addEventListener('resize', resize);
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('touchmove', onTouchMove, { passive: false });
-        document.addEventListener('touchend', onMouseLeave);
-        document.addEventListener('mouseleave', onMouseLeave);
+
+        const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+        if (isTouch) {
+            // Let the page scroll; optional: light parallax on touch if you want
+            document.addEventListener('touchmove', onTouchMove, { passive: true }); // note passive:true
+            document.addEventListener('touchend', onMouseLeave, { passive: true });
+        } else {
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseleave', onMouseLeave);
+        }
 
         generate(); resize(); requestAnimationFrame(loop);
     };
