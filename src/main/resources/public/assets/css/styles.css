@@ -4,6 +4,7 @@
 
 /* ---------- CSS Variables (dark defaults) ---------- */
 :root {
+    color-scheme: dark;
     --bg: #0b0d10;
     --bg-soft: #111318;
     --panel: #141922;
