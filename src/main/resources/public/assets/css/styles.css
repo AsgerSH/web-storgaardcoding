@@ -27,7 +27,7 @@
 }
 
 /* ---------- Theme overrides ---------- */
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
     :root[data-theme="system"] {
         --bg: #f7f8fb;
         --bg-soft: #ffffff;
