@@ -1,3 +1,6 @@
+console.log("Starfield build: central-glow v3");
+window.__STAR_BUILD = "central-glow v3";
+
 /* ==========================================================================
    StorgaardCoding — Frontend JS
    ========================================================================== */
@@ -318,20 +321,26 @@
 })();
 
 function paintBackdrop(ctx, w, h) {
-    // base color from your scheme
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+
+    // base
     ctx.fillStyle = '#0b0d10';
-    ctx.fillRect(-2, -2, w + 4, h + 4);
+    ctx.fillRect(0, 0, w, h);
 
-    // purple-ish glow (top-right)
-    const g1 = ctx.createRadialGradient(w * 0.85, h * 0.0, 0, w * 0.85, h * 0.0, Math.max(w, h) * 0.9);
-    g1.addColorStop(0, 'rgba(121,68,154,0.07)');
-    g1.addColorStop(1, 'rgba(121,68,154,0)');
-    ctx.fillStyle = g1; ctx.fillRect(0, 0, w, h);
+    // one huge, very soft radial in the center
+    const cx = w * 0.5, cy = h * 0.5;
+    const R  = Math.hypot(w, h) * 0.95;
+    const g  = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
 
-    // cyan-ish glow (20% / 80%)
-    const g2 = ctx.createRadialGradient(w * 0.20, h * 0.80, 0, w * 0.20, h * 0.80, Math.max(w, h) * 0.7);
-    g2.addColorStop(0, 'rgba(41,196,255,0.07)');
-    g2.addColorStop(1, 'rgba(41,196,255,0)');
-    ctx.fillStyle = g2; ctx.fillRect(0, 0, w, h);
+    // Here change the color of the sphere
+    g.addColorStop(0.00, 'rgba(48,210,200,0.05)');
+    g.addColorStop(0.60, 'rgba(48,210,200,0.05)');
+    g.addColorStop(1.00, 'rgba(48,210,200,0.00)');
+
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
 }
+
+
 /* === /Starfield === */
