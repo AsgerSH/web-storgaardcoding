@@ -224,6 +224,50 @@
                         <a class="btn" href="https://tripplanner.storgaardcoding.dk/api/trips" target="_blank" rel="noopener">API: /api/trips</a>
                     </div>
                 </article>
+                <!-- Music course/sessions API -->
+                <article class="card project-card reveal" data-url="https://musiccourse.storgaardcoding.dk/">
+                    <div class="card-head">
+                        <h3>Music sessions API (Exam test project)</h3>
+                        <span class="status-pill" data-status>Checking…</span>
+                    </div>
+                    <p class="card-text">Demo music sessions API that shows sessions, instructors and what playlists we're using (from Phonyfy).</p>
+                    <ul class="taglist"><li>Java</li><li>Javalin</li><li>JPA</li><li>Docker</li><li>Exam</li></ul>
+
+                    <div class="api-preview-card" data-method="GET">
+                        <div class="api-bar">
+                            <span class="api-method get">GET</span>
+                            <code class="api-path">/api/sessions</code>
+                            <div class="api-actions">
+                                <button class="btn-mini" data-copy="curl">Copy cURL</button>
+                                <span class="api-dot" title="status"></span>
+                                <span class="api-latency" title="latency">—</span>
+                            </div>
+                        </div>
+                        <div class="api-tabs">
+                            <button class="api-tab active" data-tab="response">Response</button>
+                            <button class="api-tab" data-tab="curl">cURL</button>
+                            <button class="api-tab" data-tab="headers">Headers</button>
+                        </div>
+                        <pre class="api-output" data-tab="response"><code>{ loading: true }</code></pre>
+                        <pre class="api-output hidden" data-tab="curl"><code></code></pre>
+                        <pre class="api-output hidden" data-tab="headers"><code></code></pre>
+
+                        <div class="api-controls">
+                            <select class="api-endpoint">
+                                <option value="https://musiccourse.storgaardcoding.dk/api/sessions">GET /api/sessions</option>
+                                <option value="https://musiccourse.storgaardcoding.dk/api/sessions/1">GET /api/sessions/1</option>
+                                <option value="https://musiccourse.storgaardcoding.dk/api/sessions/instructors/revenue">GET /api/sessions/instructors/revenue</option>
+                                <option value="https://musiccourse.storgaardcoding.dk/api/sessions?genre=JAZZ">GET /api/sessions?genre=JAZZ</option>
+                            </select>
+                            <a class="btn-mini" data-open>Open</a>
+                        </div>
+                    </div>
+
+                    <div class="card-actions">
+                        <a class="btn outline" href="https://musiccourse.storgaardcoding.dk/" target="_blank" rel="noopener">Open site</a>
+                        <a class="btn" href="https://musiccourse.storgaardcoding.dk/api/sessions" target="_blank" rel="noopener">API: /api/sessions</a>
+                    </div>
+                </article>
             </div>
         </div>
     </section>
